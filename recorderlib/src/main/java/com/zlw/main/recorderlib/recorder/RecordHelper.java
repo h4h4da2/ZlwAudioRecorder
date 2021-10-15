@@ -5,6 +5,7 @@ import android.media.MediaRecorder;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 
 import com.zlw.main.recorderlib.recorder.listener.RecordDataListener;
 import com.zlw.main.recorderlib.recorder.listener.RecordFftDataListener;
@@ -99,12 +100,16 @@ public class RecordHelper {
         }
         resultFile = new File(filePath);
         String tempFilePath = getTempFilePath();
+        if (FileUtils.isFileExists(tempFilePath)) {
+            File temp = new File(tempFilePath);
+            temp.delete();
+            FileUtils.createOrExistsDir(tempFilePath);
+        }
 
         Logger.d(TAG, "----------------开始录制 %s------------------------", currentConfig.getFormat().name());
         Logger.d(TAG, "参数： %s", currentConfig.toString());
         Logger.i(TAG, "pcm缓存 tmpFile: %s", tempFilePath);
         Logger.i(TAG, "录音文件 resultFile: %s", filePath);
-
 
         tmpFile = new File(tempFilePath);
         audioRecordThread = new AudioRecordThread();
@@ -231,7 +236,7 @@ public class RecordHelper {
         for (int i = offsetStart; i < length; i++) {
             sum += data[i] * data[i];
         }
-        ave = sum / (length - offsetStart) ;
+        ave = sum / (length - offsetStart);
         return (int) (Math.log10(ave) * 20);
     }
 
@@ -456,7 +461,11 @@ public class RecordHelper {
      * 实例 record_20160101_13_15_12
      */
     private String getTempFilePath() {
-        String fileDir = String.format(Locale.getDefault(), "%s/Record/", Environment.getExternalStorageDirectory().getAbsolutePath());
+
+        String fileDir = String.format(Locale.getDefault(), "%s/Record/", Environment.getDataDirectory().getAbsolutePath());
+        if (currentConfig != null && !TextUtils.isEmpty(currentConfig.getTempFileDir())) {
+            fileDir = currentConfig.getTempFileDir();
+        }
         if (!FileUtils.createOrExistsDir(fileDir)) {
             Logger.e(TAG, "文件夹创建失败：%s", fileDir);
         }
