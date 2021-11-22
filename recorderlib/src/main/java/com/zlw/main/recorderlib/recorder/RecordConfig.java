@@ -29,6 +29,8 @@ public class RecordConfig implements Serializable {
      */
     private int sampleRate = 16000;
 
+    private String recordFileName;
+
     /*
      * 录音文件存放路径，默认sdcard/Record
      */
@@ -177,6 +179,14 @@ public class RecordConfig implements Serializable {
     @Override
     public String toString() {
         return String.format(Locale.getDefault(), "录制格式： %s,采样率：%sHz,位宽：%s bit,声道数：%s", format, sampleRate, getEncoding(), getChannelCount());
+    }
+
+    public String getRecordFileName() {
+        return recordFileName;
+    }
+
+    public void setRecordFileName(String recordFileName) {
+        this.recordFileName = recordFileName;
     }
 
     public enum RecordFormat {

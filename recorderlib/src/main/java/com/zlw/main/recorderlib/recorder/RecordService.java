@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.text.TextUtils;
 
 import com.zlw.main.recorderlib.recorder.listener.RecordDataListener;
 import com.zlw.main.recorderlib.recorder.listener.RecordFftDataListener;
@@ -203,13 +204,15 @@ public class RecordService extends Service {
      */
     private static String getFilePath() {
 
-        String fileDir =
-                currentConfig.getRecordDir();
+        String fileDir = currentConfig.getRecordDir();
         if (!FileUtils.createOrExistsDir(fileDir)) {
             Logger.w(TAG, "文件夹创建失败：%s", fileDir);
             return null;
         }
         String fileName = String.format(Locale.getDefault(), "record_%s", FileUtils.getNowString(new SimpleDateFormat("yyyyMMdd_HH_mm_ss", Locale.SIMPLIFIED_CHINESE)));
+        if (!TextUtils.isEmpty(currentConfig.getRecordFileName())) {
+            fileName = currentConfig.getRecordFileName();
+        }
         return String.format(Locale.getDefault(), "%s%s%s", fileDir, fileName, currentConfig.getFormat().getExtension());
     }
 
